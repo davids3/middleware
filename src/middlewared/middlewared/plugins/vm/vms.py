@@ -297,6 +297,18 @@ class VMService(CRUDService, VMSupervisorMixin):
                     'Secure boot is only available in q35 machine type'
                 )
 
+            if data['bootloader_ovmf'] is None:
+                data['bootloader_ovmf'] = 'OVMF_CODE_4M.secboot.fd'
+
+            if 'secboot' not in data['bootloader_ovmf'].lower():
+                verrors.add(
+                    f'{schema_name}.bootloader_ovmf',
+                    'Select a bootloader_ovmf that supports secure boot i.e OVMF_CODE_4M.secboot.fd'
+                )
+
+        if data['bootloader_ovmf'] is None:
+            data['bootloader_ovmf'] = 'OVMF_CODE.fd'
+
         # TODO: Let's please implement PCI express hierarchy as the limit on devices in KVM is quite high
         # with reports of users having thousands of disks
         # Let's validate that the VM has the correct no of slots available to accommodate currently configured devices
